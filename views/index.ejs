@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= appName %></title>
+    <link rel="stylesheet" href="/styles/site.css" />
+  </head>
+  <body>
+    <div class="backdrop"></div>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Startup execution cockpit</p>
+          <h1><%= appName %></h1>
+          <p class="lede">A lightweight planning workspace for leadership teams that need one place to record, update, and finish work.</p>
+        </div>
+        <div class="hero-card">
+          <span>Live board summary</span>
+          <strong><%= summary.total %> tasks tracked</strong>
+          <p><%= summary.inProgress %> active, <%= summary.blocked %> blocked, <%= summary.done %> completed.</p>
+        </div>
+      </section>
+
+      <section class="stats" id="stats">
+        <article><span>Total</span><strong><%= summary.total %></strong></article>
+        <article><span>Planned</span><strong><%= summary.planned %></strong></article>
+        <article><span>In Progress</span><strong><%= summary.inProgress %></strong></article>
+        <article><span>Blocked</span><strong><%= summary.blocked %></strong></article>
+        <article><span>Done</span><strong><%= summary.done %></strong></article>
+        <article><span>Overdue</span><strong><%= summary.overdue %></strong></article>
+      </section>
+
+      <section class="workspace">
+        <section class="composer">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">New task</p>
+              <h2>Capture work fast</h2>
+            </div>
+          </div>
+          <form id="task-form" class="task-form">
+            <input type="hidden" name="id" id="task-id" />
+            <label>
+              <span>Task title</span>
+              <input type="text" name="title" id="title" maxlength="200" required />
+            </label>
+            <label>
+              <span>Description</span>
+              <textarea name="description" id="description" rows="4" placeholder="Goal, dependencies, expected outcome"></textarea>
+            </label>
+            <div class="grid two">
+              <label>
+                <span>Status</span>
+                <select name="status" id="status">
+                  <% statuses.forEach((status) => { %>
+                    <option value="<%= status %>"><%= status %></option>
+                  <% }) %>
+                </select>
+              </label>
+              <label>
+                <span>Priority</span>
+                <select name="priority" id="priority">
+                  <% priorities.forEach((priority) => { %>
+                    <option value="<%= priority %>" <%= priority === 'Medium' ? 'selected' : '' %>><%= priority %></option>
+                  <% }) %>
+                </select>
+              </label>
+            </div>
+            <div class="grid two">
+              <label>
+                <span>Owner</span>
+                <input type="text" name="owner" id="owner" maxlength="120" placeholder="Team member" />
+              </label>
+              <label>
+                <span>Due date</span>
+                <input type="date" name="dueDate" id="dueDate" />
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="primary">Save task</button>
+              <button type="button" class="ghost" id="reset-form">Clear</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="board-panel">
+          <div class="panel-head inline">
+            <div>
+              <p class="eyebrow">Task board</p>
+              <h2>Drive accountability</h2>
+            </div>
+            <p class="hint">Move quickly between priorities without the weight of a full project suite.</p>
+          </div>
+          <section class="filters">
+            <div class="filters-top">
+              <div>
+                <p class="eyebrow">Filters</p>
+                <h3>Focus the board</h3>
+              </div>
+              <button type="button" class="ghost" id="clear-filters">Reset filters</button>
+            </div>
+            <div class="filter-grid">
+              <label>
+                <span>Search</span>
+                <input type="search" id="filter-search" placeholder="Search title or description" />
+              </label>
+              <label>
+                <span>Status</span>
+                <select id="filter-status">
+                  <option value="">All statuses</option>
+                  <% statuses.forEach((status) => { %>
+                    <option value="<%= status %>"><%= status %></option>
+                  <% }) %>
+                </select>
+              </label>
+              <label>
+                <span>Priority</span>
+                <select id="filter-priority">
+                  <option value="">All priorities</option>
+                  <% priorities.forEach((priority) => { %>
+                    <option value="<%= priority %>"><%= priority %></option>
+                  <% }) %>
+                </select>
+              </label>
+              <label>
+                <span>Owner</span>
+                <select id="filter-owner">
+                  <option value="">All owners</option>
+                </select>
+              </label>
+              <label>
+                <span>Due state</span>
+                <select id="filter-due">
+                  <option value="">Any due state</option>
+                  <option value="overdue">Overdue</option>
+                  <option value="today">Due today</option>
+                  <option value="upcoming">Upcoming</option>
+                  <option value="none">No due date</option>
+                </select>
+              </label>
+              <label>
+                <span>Sort by</span>
+                <select id="filter-sort">
+                  <option value="updated-desc">Recently updated</option>
+                  <option value="due-asc">Due date</option>
+                  <option value="priority-desc">Priority</option>
+                  <option value="title-asc">Title</option>
+                </select>
+              </label>
+            </div>
+            <p class="filter-result" id="filter-result"></p>
+          </section>
+          <div id="board" class="board" data-tasks='<%- JSON.stringify(tasks) %>'></div>
+        </section>
+      </section>
+    </main>
+
+    <template id="task-card-template">
+      <article class="task-card">
+        <div class="task-top">
+          <span class="priority-pill"></span>
+          <div class="task-actions">
+            <button class="mini" data-action="edit">Edit</button>
+            <button class="mini danger" data-action="delete">Delete</button>
+          </div>
+        </div>
+        <h3></h3>
+        <p class="task-desc"></p>
+        <dl>
+          <div><dt>Owner</dt><dd class="task-owner"></dd></div>
+          <div><dt>Due</dt><dd class="task-due"></dd></div>
+          <div><dt>Updated</dt><dd class="task-updated"></dd></div>
+        </dl>
+      </article>
+    </template>
+
+    <script>
+      window.__TECHZICK__ = {
+        statuses: <%- JSON.stringify(statuses) %>,
+        priorities: <%- JSON.stringify(priorities) %>
+      };
+    </script>
+    <script src="/scripts/app.js" defer></script>
+  </body>
+</html>

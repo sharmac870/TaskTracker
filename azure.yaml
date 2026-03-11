@@ -1,0 +1,11 @@
+name: techzick-planner
+metadata:
+  template: techzick-planner@1.0.0
+infra:
+  provider: bicep
+  path: infra
+services:
+  web:
+    project: .
+    language: js
+    host: appservice
