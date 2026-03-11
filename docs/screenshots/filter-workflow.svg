@@ -1,0 +1,34 @@
+<svg width="1400" height="840" viewBox="0 0 1400 840" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="840" rx="32" fill="#F1F6FF"/>
+  <rect x="36" y="36" width="1328" height="768" rx="28" fill="#FBFDFF" stroke="#D3DFF5"/>
+  <text x="78" y="112" fill="#123A72" font-size="44" font-family="Georgia">Focused planning with live filters</text>
+  <rect x="72" y="156" width="1256" height="174" rx="26" fill="#EEF4FF" stroke="#D3DFF5"/>
+  <rect x="100" y="212" width="180" height="50" rx="15" fill="white" stroke="#C9D7F0"/>
+  <rect x="300" y="212" width="180" height="50" rx="15" fill="white" stroke="#C9D7F0"/>
+  <rect x="500" y="212" width="180" height="50" rx="15" fill="white" stroke="#C9D7F0"/>
+  <rect x="700" y="212" width="180" height="50" rx="15" fill="white" stroke="#C9D7F0"/>
+  <rect x="900" y="212" width="180" height="50" rx="15" fill="white" stroke="#C9D7F0"/>
+  <rect x="1100" y="212" width="180" height="50" rx="15" fill="#2B66D9"/>
+  <text x="100" y="188" fill="#4B6A92" font-size="16" font-family="Arial">SEARCH</text>
+  <text x="300" y="188" fill="#4B6A92" font-size="16" font-family="Arial">STATUS</text>
+  <text x="500" y="188" fill="#4B6A92" font-size="16" font-family="Arial">PRIORITY</text>
+  <text x="700" y="188" fill="#4B6A92" font-size="16" font-family="Arial">OWNER</text>
+  <text x="900" y="188" fill="#4B6A92" font-size="16" font-family="Arial">DUE STATE</text>
+  <text x="1100" y="188" fill="#4B6A92" font-size="16" font-family="Arial">SORT</text>
+  <text x="104" y="406" fill="#567494" font-size="24" font-family="Arial">Showing 6 of 28 tasks</text>
+  <rect x="72" y="442" width="380" height="282" rx="24" fill="#123A72"/>
+  <rect x="478" y="442" width="380" height="282" rx="24" fill="#1E4D94"/>
+  <rect x="884" y="442" width="444" height="282" rx="24" fill="#EEF4FF" stroke="#D3DFF5"/>
+  <text x="108" y="490" fill="#D7E7FF" font-size="20" font-family="Arial">FILTERS APPLIED</text>
+  <text x="108" y="542" fill="white" font-size="34" font-family="Georgia">Owner: CEO</text>
+  <text x="108" y="594" fill="white" font-size="34" font-family="Georgia">Status: In Progress</text>
+  <text x="108" y="646" fill="white" font-size="34" font-family="Georgia">Priority: Critical</text>
+  <text x="514" y="490" fill="#D7E7FF" font-size="20" font-family="Arial">BENEFITS</text>
+  <text x="514" y="542" fill="white" font-size="30" font-family="Georgia">Faster standups</text>
+  <text x="514" y="592" fill="white" font-size="30" font-family="Georgia">Cleaner executive review</text>
+  <text x="514" y="642" fill="white" font-size="30" font-family="Georgia">Immediate focus by owner</text>
+  <rect x="920" y="480" width="372" height="72" rx="18" fill="white"/>
+  <rect x="920" y="572" width="372" height="72" rx="18" fill="white"/>
+  <text x="954" y="523" fill="#123A72" font-size="24" font-family="Georgia">Prepare investor update</text>
+  <text x="954" y="615" fill="#123A72" font-size="24" font-family="Georgia">Finalize board notes</text>
+</svg>

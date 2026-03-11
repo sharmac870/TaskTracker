@@ -1,0 +1,34 @@
+<svg width="1400" height="840" viewBox="0 0 1400 840" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="840" rx="32" fill="#EAF2FF"/>
+  <rect x="36" y="36" width="1328" height="768" rx="28" fill="#F8FBFF" stroke="#C8D8F4"/>
+  <rect x="72" y="72" width="820" height="150" rx="24" fill="#123A72"/>
+  <text x="112" y="128" fill="#A8C5F8" font-size="20" font-family="Arial">TECHZICK PLANNER</text>
+  <text x="112" y="182" fill="white" font-size="54" font-family="Georgia">Execution board for focused teams</text>
+  <rect x="928" y="72" width="380" height="150" rx="24" fill="#2B66D9"/>
+  <text x="962" y="122" fill="#DCE8FF" font-size="18" font-family="Arial">LIVE SUMMARY</text>
+  <text x="962" y="178" fill="white" font-size="50" font-family="Georgia">28 tasks</text>
+  <rect x="72" y="258" width="1236" height="92" rx="20" fill="#EDF4FF" stroke="#D3E0F5"/>
+  <rect x="96" y="282" width="170" height="44" rx="14" fill="white" stroke="#C7D8F7"/>
+  <rect x="286" y="282" width="170" height="44" rx="14" fill="white" stroke="#C7D8F7"/>
+  <rect x="476" y="282" width="170" height="44" rx="14" fill="white" stroke="#C7D8F7"/>
+  <rect x="666" y="282" width="170" height="44" rx="14" fill="white" stroke="#C7D8F7"/>
+  <rect x="856" y="282" width="170" height="44" rx="14" fill="white" stroke="#C7D8F7"/>
+  <rect x="1046" y="282" width="170" height="44" rx="14" fill="#2B66D9"/>
+  <rect x="72" y="382" width="288" height="366" rx="24" fill="#EEF4FF" stroke="#D2DDF3"/>
+  <rect x="384" y="382" width="288" height="366" rx="24" fill="#EEF4FF" stroke="#D2DDF3"/>
+  <rect x="696" y="382" width="288" height="366" rx="24" fill="#EEF4FF" stroke="#D2DDF3"/>
+  <rect x="1008" y="382" width="300" height="366" rx="24" fill="#EEF4FF" stroke="#D2DDF3"/>
+  <text x="96" y="420" fill="#45648C" font-size="20" font-family="Arial">PLANNED</text>
+  <text x="408" y="420" fill="#45648C" font-size="20" font-family="Arial">IN PROGRESS</text>
+  <text x="720" y="420" fill="#45648C" font-size="20" font-family="Arial">BLOCKED</text>
+  <text x="1032" y="420" fill="#45648C" font-size="20" font-family="Arial">DONE</text>
+  <rect x="96" y="448" width="240" height="120" rx="20" fill="white"/>
+  <rect x="96" y="584" width="240" height="120" rx="20" fill="white"/>
+  <rect x="408" y="448" width="240" height="120" rx="20" fill="white"/>
+  <rect x="720" y="448" width="240" height="120" rx="20" fill="white"/>
+  <rect x="1032" y="448" width="240" height="120" rx="20" fill="white"/>
+  <rect x="118" y="468" width="76" height="28" rx="14" fill="#D9E8FF"/>
+  <rect x="430" y="468" width="76" height="28" rx="14" fill="#D9E8FF"/>
+  <rect x="742" y="468" width="76" height="28" rx="14" fill="#D9E8FF"/>
+  <rect x="1054" y="468" width="76" height="28" rx="14" fill="#D9E8FF"/>
+</svg>
