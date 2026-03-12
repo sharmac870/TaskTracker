@@ -36,16 +36,8 @@
               <input type="text" id="lesson-title" maxlength="140" required />
             </label>
             <label>
-              <span>Stage</span>
-              <input type="text" id="lesson-stage" maxlength="80" placeholder="Fundraising, launch, hiring, customer discovery" />
-            </label>
-            <label>
               <span>Lesson</span>
-              <textarea id="lesson-summary" rows="5" placeholder="What did the team learn?" required></textarea>
-            </label>
-            <label>
-              <span>Impact</span>
-              <textarea id="lesson-impact" rows="4" placeholder="What changed as a result?"></textarea>
+              <textarea id="lesson-summary" rows="4" placeholder="What did the team learn?" required></textarea>
             </label>
             <div class="form-actions">
               <button type="submit" class="primary">Save lesson</button>
@@ -60,7 +52,10 @@
               <p class="eyebrow">Archive</p>
               <h2>Journey notes</h2>
             </div>
-            <p class="hint">Short, specific lessons tend to stay useful longer than broad retrospectives.</p>
+            <div class="lessons-actions">
+              <p class="hint">Short, specific lessons tend to stay useful longer than broad retrospectives.</p>
+              <button type="button" class="ghost" id="delete-selected-lessons">Delete selected</button>
+            </div>
           </div>
 
           <section class="lessons-list" id="lessons-list" data-lessons='<%- JSON.stringify(lessons) %>'></section>
@@ -71,15 +66,17 @@
     <template id="lesson-card-template">
       <article class="lesson-card">
         <div class="lesson-meta">
-          <span class="priority-pill lesson-stage"></span>
+          <label class="lesson-select">
+            <input type="checkbox" class="lesson-checkbox" />
+            <span>Select</span>
+          </label>
           <time class="lesson-date"></time>
         </div>
-        <h3 class="lesson-title"></h3>
-        <p class="lesson-summary"></p>
-        <div class="lesson-impact-block">
-          <span>Impact</span>
-          <p class="lesson-impact"></p>
+        <div class="lesson-head">
+          <h3 class="lesson-title"></h3>
+          <button type="button" class="mini danger" data-action="delete-lesson">Delete</button>
         </div>
+        <p class="lesson-summary"></p>
       </article>
     </template>
 

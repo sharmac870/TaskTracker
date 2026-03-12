@@ -105,13 +105,38 @@ app.post('/api/lessons', async (req, res, next) => {
   }
 });
 
+app.delete('/api/lessons/:id', async (req, res, next) => {
+  try {
+    const deleted = await lessonStorage.deleteLesson(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ error: 'Lesson not found.' });
+    }
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/lessons/delete-many', async (req, res, next) => {
+  try {
+    const ids = Array.isArray(req.body.ids) ? req.body.ids : [];
+    if (!ids.length) {
+      return res.status(400).json({ error: 'Select at least one lesson.' });
+    }
+    const deletedCount = await lessonStorage.deleteLessons(ids);
+    res.json({ deletedCount });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get('/healthz', async (req, res) => {
   res.json({ ok: true, app: 'techzick-planner' });
 });
 
 app.use((error, req, res, next) => {
   console.error(error);
-  const status = ['Task title is required.', 'Lesson title is required.', 'Lesson summary is required.'].includes(error.message) ? 400 : 500;
+  const status = ['Task title is required.', 'Lesson title is required.', 'Lesson summary is required.', 'Select at least one lesson.'].includes(error.message) ? 400 : 500;
   res.status(status).json({ error: error.message || 'Unexpected server error.' });
 });
 

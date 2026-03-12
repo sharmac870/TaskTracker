@@ -544,12 +544,12 @@ button:hover {
 
 .lessons-list {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
 .lesson-card {
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 14px;
+  padding: 12px 14px;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.9);
   box-shadow: var(--shadow);
@@ -560,17 +560,39 @@ button:hover {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.lesson-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.lesson-select input {
+  width: auto;
+  margin: 0;
+}
+
+.lesson-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
 }
 
 .lesson-date {
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
 }
 
 .lesson-card h3 {
-  margin: 0 0 8px;
-  font-size: 1.18rem;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.35;
 }
 
 .lesson-card p {
@@ -579,27 +601,14 @@ button:hover {
 
 .lesson-summary {
   color: var(--ink);
-  line-height: 1.6;
+  line-height: 1.5;
+  font-size: 0.9rem;
 }
 
-.lesson-impact-block {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-}
-
-.lesson-impact-block span {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.68rem;
-}
-
-.lesson-impact {
-  color: var(--muted);
-  line-height: 1.6;
+.lessons-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 @keyframes rise {
@@ -666,7 +675,8 @@ button:hover {
 
   .grid.two,
   .panel-head.inline,
-  .filters-top {
+  .filters-top,
+  .lessons-actions {
     grid-template-columns: 1fr;
     display: grid;
   }

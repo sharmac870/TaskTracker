@@ -52,6 +52,27 @@ class LessonStorage {
     await this.writeLessons(lessons);
     return lesson;
   }
+
+  async deleteLesson(id) {
+    const lessons = await this.readLessons();
+    const nextLessons = lessons.filter((lesson) => lesson.id !== id);
+    const deleted = nextLessons.length !== lessons.length;
+    if (deleted) {
+      await this.writeLessons(nextLessons);
+    }
+    return deleted;
+  }
+
+  async deleteLessons(ids) {
+    const idSet = new Set(ids);
+    const lessons = await this.readLessons();
+    const nextLessons = lessons.filter((lesson) => !idSet.has(lesson.id));
+    const deletedCount = lessons.length - nextLessons.length;
+    if (deletedCount > 0) {
+      await this.writeLessons(nextLessons);
+    }
+    return deletedCount;
+  }
 }
 
 function normalizeLesson(input = {}) {
@@ -59,9 +80,7 @@ function normalizeLesson(input = {}) {
   return {
     id: input.id || randomUUID(),
     title: String(input.title || '').trim(),
-    stage: String(input.stage || '').trim(),
     summary: String(input.summary || '').trim(),
-    impact: String(input.impact || '').trim(),
     createdAt: now
   };
 }

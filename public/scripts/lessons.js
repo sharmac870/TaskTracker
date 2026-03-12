@@ -1,6 +1,7 @@
 const lessonForm = document.getElementById('lesson-form');
 const lessonsList = document.getElementById('lessons-list');
 const lessonTemplate = document.getElementById('lesson-card-template');
+const deleteSelectedButton = document.getElementById('delete-selected-lessons');
 
 let lessons = JSON.parse(lessonsList.dataset.lessons || '[]');
 
@@ -21,11 +22,11 @@ function renderLessons() {
 
   for (const lesson of lessons) {
     const card = lessonTemplate.content.firstElementChild.cloneNode(true);
-    card.querySelector('.lesson-stage').textContent = lesson.stage || 'General';
+    card.dataset.id = lesson.id;
+    card.querySelector('.lesson-checkbox').value = lesson.id;
     card.querySelector('.lesson-date').textContent = formatDate(lesson.createdAt);
     card.querySelector('.lesson-title').textContent = lesson.title;
     card.querySelector('.lesson-summary').textContent = lesson.summary;
-    card.querySelector('.lesson-impact').textContent = lesson.impact || 'No downstream action recorded yet.';
     lessonsList.appendChild(card);
   }
 }
@@ -35,9 +36,7 @@ lessonForm.addEventListener('submit', async (event) => {
 
   const payload = {
     title: document.getElementById('lesson-title').value,
-    stage: document.getElementById('lesson-stage').value,
-    summary: document.getElementById('lesson-summary').value,
-    impact: document.getElementById('lesson-impact').value
+    summary: document.getElementById('lesson-summary').value
   };
 
   try {
@@ -55,6 +54,56 @@ lessonForm.addEventListener('submit', async (event) => {
     const { lesson } = await response.json();
     lessons = [lesson, ...lessons];
     lessonForm.reset();
+    renderLessons();
+  } catch (error) {
+    window.alert(error.message);
+  }
+});
+
+deleteSelectedButton.addEventListener('click', async () => {
+  const ids = Array.from(document.querySelectorAll('.lesson-checkbox:checked')).map((checkbox) => checkbox.value);
+  if (!ids.length) {
+    window.alert('Select at least one lesson.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/lessons/delete-many', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids })
+    });
+
+    if (!response.ok) {
+      const body = await response.json();
+      throw new Error(body.error || 'Unable to delete lessons.');
+    }
+
+    lessons = lessons.filter((lesson) => !ids.includes(lesson.id));
+    renderLessons();
+  } catch (error) {
+    window.alert(error.message);
+  }
+});
+
+lessonsList.addEventListener('click', async (event) => {
+  if (event.target.dataset.action !== 'delete-lesson') {
+    return;
+  }
+
+  const card = event.target.closest('.lesson-card');
+  if (!card) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/lessons/${card.dataset.id}`, { method: 'DELETE' });
+    if (!response.ok) {
+      const body = await response.json();
+      throw new Error(body.error || 'Unable to delete lesson.');
+    }
+
+    lessons = lessons.filter((lesson) => lesson.id !== card.dataset.id);
     renderLessons();
   } catch (error) {
     window.alert(error.message);
