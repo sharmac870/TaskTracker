@@ -1,6 +1,6 @@
-# Techzick Planner
+# Kinetriq IDC
 
-Techzick Planner is a lightweight task planning and execution workspace for startup teams that need one place to capture, prioritize, update, and review work.
+Kinetriq IDC is a lightweight task planning and execution workspace for startup teams that need one place to capture, prioritize, update, and review work.
 
 It is designed as a lean alternative to heavier planning tools such as Microsoft Planner or Microsoft Project, with a faster setup path and a cleaner operating surface for small teams.
 
@@ -8,11 +8,11 @@ It is designed as a lean alternative to heavier planning tools such as Microsoft
 
 ### Dashboard and board view
 
-![Techzick Planner dashboard](docs/screenshots/dashboard-overview.svg)
+![Kinetriq IDC dashboard](docs/screenshots/dashboard-overview.svg)
 
 ### Filtered planning workflow
 
-![Techzick Planner filters](docs/screenshots/filter-workflow.svg)
+![Kinetriq IDC filters](docs/screenshots/filter-workflow.svg)
 
 ## Features
 

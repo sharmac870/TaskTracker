@@ -147,7 +147,7 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'APP_NAME'
-          value: 'Techzick Planner'
+          value: 'Kinetriq IDC'
         }
         {
           name: 'NODE_ENV'

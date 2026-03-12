@@ -1,7 +1,7 @@
 {
-  "name": "techzick-planner",
+  "name": "kinetriq-idc",
   "version": "1.0.0",
-  "description": "Techzick Planner task tracking application",
+  "description": "Kinetriq IDC task tracking application",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

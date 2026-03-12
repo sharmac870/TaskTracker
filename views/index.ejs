@@ -102,7 +102,13 @@
               <p class="eyebrow">Task board</p>
               <h2>Task board</h2>
             </div>
-            <p class="hint">Review status, filter down quickly, and keep the current workload readable.</p>
+            <div class="board-tools">
+              <p class="hint">Review status, filter down quickly, and keep the current workload readable.</p>
+              <div class="view-toggle" id="view-toggle">
+                <button type="button" class="ghost is-active" data-view="board">Board</button>
+                <button type="button" class="ghost" data-view="list">List</button>
+              </div>
+            </div>
           </div>
           <section class="filters">
             <div class="filters-top">
@@ -164,6 +170,7 @@
             <p class="filter-result" id="filter-result"></p>
           </section>
           <div id="board" class="board" data-tasks='<%- JSON.stringify(tasks) %>'></div>
+          <div id="task-list" class="task-list hidden" aria-hidden="true"></div>
         </section>
       </section>
     </main>
@@ -184,6 +191,27 @@
           <div><dt>Due</dt><dd class="task-due"></dd></div>
           <div><dt>Updated</dt><dd class="task-updated"></dd></div>
         </dl>
+      </article>
+    </template>
+
+    <template id="task-row-template">
+      <article class="task-row">
+        <div class="task-row-main">
+          <div class="task-row-title">
+            <h3></h3>
+            <p class="task-desc"></p>
+          </div>
+          <div class="task-row-meta">
+            <span class="priority-pill"></span>
+            <span class="task-status"></span>
+            <span class="task-owner"></span>
+            <span class="task-due"></span>
+          </div>
+        </div>
+        <div class="task-actions">
+          <button class="mini" data-action="edit">Edit</button>
+          <button class="mini danger" data-action="delete">Delete</button>
+        </div>
       </article>
     </template>
 

@@ -21,7 +21,7 @@ app.get('/', async (req, res, next) => {
   try {
     const tasks = await storage.listTasks();
     res.render('index', {
-      appName: process.env.APP_NAME || 'Techzick Planner',
+      appName: process.env.APP_NAME || 'Kinetriq IDC',
       tasks,
       summary: summarize(tasks),
       lessonCount: (await lessonStorage.listLessons()).length,
@@ -37,7 +37,7 @@ app.get('/lessons', async (req, res, next) => {
   try {
     const lessons = await lessonStorage.listLessons();
     res.render('lessons', {
-      appName: process.env.APP_NAME || 'Techzick Planner',
+      appName: process.env.APP_NAME || 'Kinetriq IDC',
       lessons
     });
   } catch (error) {
@@ -131,7 +131,7 @@ app.post('/api/lessons/delete-many', async (req, res, next) => {
 });
 
 app.get('/healthz', async (req, res) => {
-  res.json({ ok: true, app: 'techzick-planner' });
+  res.json({ ok: true, app: 'kinetriq-idc' });
 });
 
 app.use((error, req, res, next) => {
@@ -142,7 +142,7 @@ app.use((error, req, res, next) => {
 
 const server = app.listen(port, host, () => {
   const localHost = host === '0.0.0.0' ? '127.0.0.1' : host;
-  console.log(`Techzick Planner listening at http://${localHost}:${port}`);
+  console.log(`Kinetriq IDC listening at http://${localHost}:${port}`);
 });
 
 server.on('error', (error) => {

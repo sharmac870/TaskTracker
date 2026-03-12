@@ -3,11 +3,16 @@ const stats = document.getElementById('stats');
 const form = document.getElementById('task-form');
 const resetButton = document.getElementById('reset-form');
 const template = document.getElementById('task-card-template');
+const rowTemplate = document.getElementById('task-row-template');
 const clearFiltersButton = document.getElementById('clear-filters');
 const filterResult = document.getElementById('filter-result');
 const statTiles = Array.from(stats.querySelectorAll('[data-stat-filter]'));
+const viewToggle = document.getElementById('view-toggle');
+const taskList = document.getElementById('task-list');
 let draggedTaskId = null;
 let activeStatFilter = 'total';
+let viewMode = 'board';
+const collapsedStatuses = Object.fromEntries(window.__TECHZICK__.statuses.map((status) => [status, true]));
 
 const fields = {
   id: document.getElementById('task-id'),
@@ -194,14 +199,18 @@ function refreshOwnerOptions() {
 function renderBoard(items) {
   board.innerHTML = '';
   for (const status of window.__TECHZICK__.statuses) {
+    const isCollapsed = collapsedStatuses[status];
     const column = document.createElement('section');
-    column.className = 'board-column';
+    column.className = `board-column${isCollapsed ? ' is-collapsed' : ''}`;
     column.dataset.status = status;
     column.innerHTML = `
-      <header>
-        <span>${status}</span>
-        <strong>${items.filter((task) => task.status === status).length}</strong>
-      </header>
+      <button type="button" class="column-toggle" data-action="toggle-column" data-status="${status}" aria-expanded="${String(!isCollapsed)}">
+        <span class="column-title">${status}</span>
+        <span class="column-meta">
+          <strong>${items.filter((task) => task.status === status).length}</strong>
+          <span class="column-chevron">${isCollapsed ? '+' : '−'}</span>
+        </span>
+      </button>
       <div class="column-list" data-status="${status}"></div>
     `;
 
@@ -231,6 +240,41 @@ function renderBoard(items) {
   }
 }
 
+function renderList(items) {
+  taskList.innerHTML = '';
+
+  if (!items.length) {
+    const empty = document.createElement('p');
+    empty.className = 'empty-state';
+    empty.textContent = 'No tasks match the current filters.';
+    taskList.appendChild(empty);
+    return;
+  }
+
+  for (const task of items) {
+    const row = rowTemplate.content.firstElementChild.cloneNode(true);
+    row.dataset.id = task.id;
+    row.querySelector('h3').textContent = task.title;
+    row.querySelector('.task-desc').textContent = task.description || 'No additional detail provided.';
+    row.querySelector('.priority-pill').textContent = task.priority;
+    row.querySelector('.task-status').textContent = task.status;
+    row.querySelector('.task-owner').textContent = task.owner || 'Unassigned';
+    row.querySelector('.task-due').textContent = formatDate(task.dueDate);
+    taskList.appendChild(row);
+  }
+}
+
+function syncViewMode() {
+  const isBoard = viewMode === 'board';
+  board.classList.toggle('hidden', !isBoard);
+  taskList.classList.toggle('hidden', isBoard);
+  board.setAttribute('aria-hidden', String(!isBoard));
+  taskList.setAttribute('aria-hidden', String(isBoard));
+  viewToggle.querySelectorAll('[data-view]').forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.view === viewMode);
+  });
+}
+
 function render() {
   refreshOwnerOptions();
   const filteredTasks = getFilteredTasks();
@@ -238,6 +282,8 @@ function render() {
   syncStatTiles();
   renderFilterResult(filteredTasks);
   renderBoard(filteredTasks);
+  renderList(filteredTasks);
+  syncViewMode();
 }
 
 function resetForm() {
@@ -364,11 +410,27 @@ stats.addEventListener('click', (event) => {
   render();
 });
 
+viewToggle.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-view]');
+  if (!button) return;
+  viewMode = button.dataset.view;
+  syncViewMode();
+});
+
 board.addEventListener('click', async (event) => {
-  const action = event.target.dataset.action;
+  const actionTarget = event.target.closest('[data-action]');
+  const action = actionTarget?.dataset.action;
   if (!action) return;
 
+  if (action === 'toggle-column') {
+    const status = actionTarget.dataset.status;
+    collapsedStatuses[status] = !collapsedStatuses[status];
+    render();
+    return;
+  }
+
   const card = event.target.closest('.task-card');
+  if (!card) return;
   const task = tasks.find((item) => item.id === card.dataset.id);
   if (!task) return;
 
