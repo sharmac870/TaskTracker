@@ -271,7 +271,10 @@ function renderList(items) {
     row.dataset.id = task.id;
     row.querySelector('h3').textContent = task.title;
     row.querySelector('.task-desc').textContent = task.description || 'No additional detail provided.';
-    row.querySelector('.task-comment').textContent = task.comment || 'No progress update yet.';
+    const commentNode = row.querySelector('.task-comment');
+    if (commentNode) {
+      commentNode.textContent = task.comment || 'No progress update yet.';
+    }
     row.querySelector('.priority-pill').textContent = task.priority;
     row.querySelector('.task-status').textContent = task.status;
     row.querySelector('.task-owner').textContent = task.owner || 'Unassigned';
