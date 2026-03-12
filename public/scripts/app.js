@@ -20,6 +20,7 @@ const fields = {
   description: document.getElementById('description'),
   status: document.getElementById('status'),
   priority: document.getElementById('priority'),
+  project: document.getElementById('project'),
   owner: document.getElementById('owner'),
   dueDate: document.getElementById('dueDate')
 };
@@ -28,6 +29,7 @@ const filters = {
   search: document.getElementById('filter-search'),
   status: document.getElementById('filter-status'),
   priority: document.getElementById('filter-priority'),
+  project: document.getElementById('filter-project'),
   owner: document.getElementById('filter-owner'),
   due: document.getElementById('filter-due'),
   sort: document.getElementById('filter-sort')
@@ -165,17 +167,20 @@ function getFilteredTasks() {
   const search = filters.search.value.trim().toLowerCase();
   const status = filters.status.value;
   const priority = filters.priority.value;
+  const project = filters.project.value;
   const owner = filters.owner.value;
   const due = filters.due.value;
   const sort = filters.sort.value;
 
   const filtered = tasks.filter((task) => {
-    const haystack = `${task.title} ${task.description} ${task.comment || ''} ${task.owner}`.toLowerCase();
+    const haystack = `${task.title} ${task.description} ${task.comment || ''} ${task.project || ''} ${task.owner}`.toLowerCase();
+    const projectValue = (task.project || 'No project').trim();
     const ownerValue = (task.owner || 'Unassigned').trim();
 
     return (!search || haystack.includes(search)) &&
       (!status || task.status === status) &&
       (!priority || task.priority === priority) &&
+      (!project || projectValue === project) &&
       (!owner || ownerValue === owner) &&
       matchesDueFilter(task, due);
   });
@@ -191,23 +196,39 @@ function renderFilterResult(items) {
     : `Showing ${filtered} of ${total} tasks`;
 }
 
-function refreshOwnerOptions() {
-  const selected = filters.owner.value;
-  const owners = [...new Set(tasks.map((task) => (task.owner || 'Unassigned').trim()))]
+function refreshFilterOptions(control, values, emptyLabel) {
+  const selected = control.value;
+  const sortedValues = [...new Set(values)]
     .filter(Boolean)
     .sort((left, right) => left.localeCompare(right));
 
-  filters.owner.innerHTML = '<option value="">All owners</option>';
-  for (const owner of owners) {
+  control.innerHTML = `<option value="">${emptyLabel}</option>`;
+  for (const value of sortedValues) {
     const option = document.createElement('option');
-    option.value = owner;
-    option.textContent = owner;
-    filters.owner.appendChild(option);
+    option.value = value;
+    option.textContent = value;
+    control.appendChild(option);
   }
 
-  if (owners.includes(selected)) {
-    filters.owner.value = selected;
+  if (sortedValues.includes(selected)) {
+    control.value = selected;
   }
+}
+
+function refreshOwnerOptions() {
+  refreshFilterOptions(
+    filters.owner,
+    tasks.map((task) => (task.owner || 'Unassigned').trim()),
+    'All owners'
+  );
+}
+
+function refreshProjectOptions() {
+  refreshFilterOptions(
+    filters.project,
+    tasks.map((task) => (task.project || 'No project').trim()),
+    'All projects'
+  );
 }
 
 function renderBoard(items) {
@@ -245,6 +266,7 @@ function renderBoard(items) {
       node.querySelector('h3').textContent = task.title;
       node.querySelector('.task-desc').textContent = task.description || 'No additional detail provided.';
       node.querySelector('.task-comment').textContent = task.comment || 'No progress update yet.';
+      node.querySelector('.task-project').textContent = task.project || 'No project';
       node.querySelector('.task-owner').textContent = task.owner || 'Unassigned';
       node.querySelector('.task-due').textContent = formatDate(task.dueDate);
       node.querySelector('.task-updated').textContent = formatStamp(task.updatedAt);
@@ -276,6 +298,7 @@ function renderList(items) {
       commentNode.textContent = task.comment || 'No progress update yet.';
     }
     row.querySelector('.priority-pill').textContent = task.priority;
+    row.querySelector('.task-project').textContent = task.project || 'No project';
     row.querySelector('.task-status').textContent = task.status;
     row.querySelector('.task-owner').textContent = task.owner || 'Unassigned';
     row.querySelector('.task-due').textContent = formatDate(task.dueDate);
@@ -295,6 +318,7 @@ function syncViewMode() {
 }
 
 function render() {
+  refreshProjectOptions();
   refreshOwnerOptions();
   const filteredTasks = getFilteredTasks();
   renderStats(filteredTasks);
@@ -318,6 +342,7 @@ function populateForm(task) {
   fields.description.value = task.description || '';
   fields.status.value = task.status;
   fields.priority.value = task.priority;
+  fields.project.value = task.project || '';
   fields.owner.value = task.owner || '';
   fields.dueDate.value = task.dueDate || '';
   fields.title.focus();
@@ -339,6 +364,7 @@ async function handleTaskAction(taskId, action) {
           comment: nextComment,
           status: task.status,
           priority: task.priority,
+          project: task.project,
           owner: task.owner,
           dueDate: task.dueDate
         },
@@ -420,6 +446,7 @@ async function moveTaskToStatus(id, status) {
       comment: task.comment,
       status,
       priority: task.priority,
+      project: task.project,
       owner: task.owner,
       dueDate: task.dueDate
     },
@@ -438,6 +465,7 @@ form.addEventListener('submit', async (event) => {
     description: fields.description.value,
     status: fields.status.value,
     priority: fields.priority.value,
+    project: fields.project.value,
     owner: fields.owner.value,
     dueDate: fields.dueDate.value
   };
@@ -470,6 +498,7 @@ clearFiltersButton.addEventListener('click', () => {
   filters.search.value = '';
   filters.status.value = '';
   filters.priority.value = '';
+  filters.project.value = '';
   filters.owner.value = '';
   filters.due.value = '';
   filters.sort.value = 'updated-desc';

@@ -647,6 +647,7 @@ button:hover {
   font-size: 0.82rem;
 }
 
+.task-project,
 .task-status,
 .task-owner,
 .task-due {

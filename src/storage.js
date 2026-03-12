@@ -15,6 +15,7 @@ function normalizeTask(input, existing = {}) {
     comment: String(input.comment || existing.comment || '').trim(),
     status: STATUSES.includes(input.status) ? input.status : existing.status || 'Planned',
     priority: PRIORITIES.includes(input.priority) ? input.priority : existing.priority || 'Medium',
+    project: String(input.project || existing.project || '').trim(),
     owner: String(input.owner || existing.owner || '').trim(),
     dueDate: input.dueDate || existing.dueDate || '',
     createdAt: existing.createdAt || now,
@@ -113,6 +114,7 @@ class SqlStorage {
         comment NVARCHAR(MAX) NULL,
         status NVARCHAR(40) NOT NULL,
         priority NVARCHAR(40) NOT NULL,
+        project NVARCHAR(160) NULL,
         owner NVARCHAR(120) NULL,
         dueDate NVARCHAR(40) NULL,
         createdAt NVARCHAR(40) NOT NULL,
@@ -124,6 +126,11 @@ class SqlStorage {
       IF COL_LENGTH('Tasks', 'comment') IS NULL
       ALTER TABLE Tasks ADD comment NVARCHAR(MAX) NULL
     `);
+
+    await pool.request().query(`
+      IF COL_LENGTH('Tasks', 'project') IS NULL
+      ALTER TABLE Tasks ADD project NVARCHAR(160) NULL
+    `);
   }
 
   mapRecord(record) {
@@ -134,6 +141,7 @@ class SqlStorage {
       comment: record.comment || '',
       status: record.status,
       priority: record.priority,
+      project: record.project || '',
       owner: record.owner || '',
       dueDate: record.dueDate || '',
       createdAt: record.createdAt,
@@ -160,13 +168,14 @@ class SqlStorage {
       .input('comment', sql.NVarChar(sql.MAX), task.comment)
       .input('status', sql.NVarChar(40), task.status)
       .input('priority', sql.NVarChar(40), task.priority)
+      .input('project', sql.NVarChar(160), task.project)
       .input('owner', sql.NVarChar(120), task.owner)
       .input('dueDate', sql.NVarChar(40), task.dueDate)
       .input('createdAt', sql.NVarChar(40), task.createdAt)
       .input('updatedAt', sql.NVarChar(40), task.updatedAt)
       .query(`
-        INSERT INTO Tasks (id, title, description, comment, status, priority, owner, dueDate, createdAt, updatedAt)
-        VALUES (@id, @title, @description, @comment, @status, @priority, @owner, @dueDate, @createdAt, @updatedAt)
+        INSERT INTO Tasks (id, title, description, comment, status, priority, project, owner, dueDate, createdAt, updatedAt)
+        VALUES (@id, @title, @description, @comment, @status, @priority, @project, @owner, @dueDate, @createdAt, @updatedAt)
       `);
     return task;
   }
@@ -186,6 +195,7 @@ class SqlStorage {
       .input('comment', sql.NVarChar(sql.MAX), task.comment)
       .input('status', sql.NVarChar(40), task.status)
       .input('priority', sql.NVarChar(40), task.priority)
+      .input('project', sql.NVarChar(160), task.project)
       .input('owner', sql.NVarChar(120), task.owner)
       .input('dueDate', sql.NVarChar(40), task.dueDate)
       .input('updatedAt', sql.NVarChar(40), task.updatedAt)
@@ -196,6 +206,7 @@ class SqlStorage {
             comment = @comment,
             status = @status,
             priority = @priority,
+            project = @project,
             owner = @owner,
             dueDate = @dueDate,
             updatedAt = @updatedAt
