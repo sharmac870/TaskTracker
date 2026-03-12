@@ -15,10 +15,19 @@
           <h1>Lessons Learned</h1>
           <p class="lede">Keep a written record of hard-earned lessons so the team can reuse wins and avoid repeat mistakes.</p>
         </div>
-        <div class="hero-card">
-          <span>Total lessons</span>
-          <strong><%= lessons.length %></strong>
-          <p>Review the strongest patterns from execution, customers, delivery, and team operations.</p>
+        <div class="hero-side">
+          <form method="post" action="/logout" class="session-card">
+            <div>
+              <p class="eyebrow">Signed in</p>
+              <strong><%= currentUser?.username %></strong>
+            </div>
+            <button type="submit" class="ghost">Logout</button>
+          </form>
+          <div class="hero-card">
+            <span>Total lessons</span>
+            <strong><%= lessons.length %></strong>
+            <p>Review the strongest patterns from execution, customers, delivery, and team operations.</p>
+          </div>
         </div>
       </section>
 

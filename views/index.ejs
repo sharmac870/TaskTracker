@@ -16,6 +16,13 @@
           <p class="lede">Track priorities, keep owners visible, and move work across the board without the bulk of a full project suite.</p>
         </div>
         <div class="hero-side">
+          <form method="post" action="/logout" class="session-card">
+            <div>
+              <p class="eyebrow">Signed in</p>
+              <strong><%= currentUser?.username %></strong>
+            </div>
+            <button type="submit" class="ghost">Logout</button>
+          </form>
           <a href="/lessons" class="insight-card insight-card-compact">
             <div>
               <p class="eyebrow">Startup memory</p>
@@ -180,12 +187,17 @@
         <div class="task-top">
           <span class="priority-pill"></span>
           <div class="task-actions">
+            <button class="mini" data-action="comment">Comment</button>
             <button class="mini" data-action="edit">Edit</button>
             <button class="mini danger" data-action="delete">Delete</button>
           </div>
         </div>
         <h3></h3>
         <p class="task-desc"></p>
+        <div class="task-comment-wrap">
+          <span class="task-comment-label">Latest comment</span>
+          <p class="task-comment"></p>
+        </div>
         <dl>
           <div><dt>Owner</dt><dd class="task-owner"></dd></div>
           <div><dt>Due</dt><dd class="task-due"></dd></div>
@@ -209,6 +221,7 @@
           </div>
         </div>
         <div class="task-actions">
+          <button class="mini" data-action="comment">Comment</button>
           <button class="mini" data-action="edit">Edit</button>
           <button class="mini danger" data-action="delete">Delete</button>
         </div>

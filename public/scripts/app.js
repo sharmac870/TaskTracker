@@ -42,6 +42,20 @@ const priorityWeight = {
   Critical: 4
 };
 
+async function parseJson(response) {
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    return null;
+  }
+
+  return response.json();
+}
+
+function redirectToLogin() {
+  const nextPath = encodeURIComponent(window.location.pathname + window.location.search);
+  window.location.assign(`/login?next=${nextPath}`);
+}
+
 function formatDate(value) {
   if (!value) return 'Not set';
   return new Date(value).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -156,7 +170,7 @@ function getFilteredTasks() {
   const sort = filters.sort.value;
 
   const filtered = tasks.filter((task) => {
-    const haystack = `${task.title} ${task.description} ${task.owner}`.toLowerCase();
+    const haystack = `${task.title} ${task.description} ${task.comment || ''} ${task.owner}`.toLowerCase();
     const ownerValue = (task.owner || 'Unassigned').trim();
 
     return (!search || haystack.includes(search)) &&
@@ -230,6 +244,7 @@ function renderBoard(items) {
       node.querySelector('.priority-pill').textContent = task.priority;
       node.querySelector('h3').textContent = task.title;
       node.querySelector('.task-desc').textContent = task.description || 'No additional detail provided.';
+      node.querySelector('.task-comment').textContent = task.comment || 'No progress update yet.';
       node.querySelector('.task-owner').textContent = task.owner || 'Unassigned';
       node.querySelector('.task-due').textContent = formatDate(task.dueDate);
       node.querySelector('.task-updated').textContent = formatStamp(task.updatedAt);
@@ -256,6 +271,7 @@ function renderList(items) {
     row.dataset.id = task.id;
     row.querySelector('h3').textContent = task.title;
     row.querySelector('.task-desc').textContent = task.description || 'No additional detail provided.';
+    row.querySelector('.task-comment').textContent = task.comment || 'No progress update yet.';
     row.querySelector('.priority-pill').textContent = task.priority;
     row.querySelector('.task-status').textContent = task.status;
     row.querySelector('.task-owner').textContent = task.owner || 'Unassigned';
@@ -308,6 +324,30 @@ async function handleTaskAction(taskId, action) {
   const task = tasks.find((item) => item.id === taskId);
   if (!task) return;
 
+  if (action === 'comment') {
+    const nextComment = window.prompt(`Update progress comment for "${task.title}"`, task.comment || '');
+    if (nextComment === null) return;
+
+    try {
+      await saveTask(
+        {
+          title: task.title,
+          description: task.description,
+          comment: nextComment,
+          status: task.status,
+          priority: task.priority,
+          owner: task.owner,
+          dueDate: task.dueDate
+        },
+        task.id
+      );
+      render();
+    } catch (error) {
+      window.alert(error.message);
+    }
+    return;
+  }
+
   if (action === 'edit') {
     populateForm(task);
     return;
@@ -333,12 +373,17 @@ async function saveTask(payload, id) {
     body: JSON.stringify(payload)
   });
 
-  if (!response.ok) {
-    const body = await response.json();
-    throw new Error(body.error || 'Unable to save task.');
+  if (response.status === 401) {
+    redirectToLogin();
+    return;
   }
 
-  const { task } = await response.json();
+  if (!response.ok) {
+    const body = await parseJson(response);
+    throw new Error(body?.error || 'Unable to save task.');
+  }
+
+  const { task } = await parseJson(response);
   if (id) {
     tasks = tasks.map((item) => (item.id === id ? task : item));
   } else {
@@ -348,9 +393,13 @@ async function saveTask(payload, id) {
 
 async function removeTask(id) {
   const response = await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+  if (response.status === 401) {
+    redirectToLogin();
+    return;
+  }
   if (!response.ok) {
-    const body = await response.json();
-    throw new Error(body.error || 'Unable to delete task.');
+    const body = await parseJson(response);
+    throw new Error(body?.error || 'Unable to delete task.');
   }
   tasks = tasks.filter((task) => task.id !== id);
 }
@@ -365,6 +414,7 @@ async function moveTaskToStatus(id, status) {
     {
       title: task.title,
       description: task.description,
+      comment: task.comment,
       status,
       priority: task.priority,
       owner: task.owner,

@@ -76,7 +76,14 @@ npm start
 Open:
 
 ```text
-http://127.0.0.1:6000
+http://127.0.0.1:9000
+```
+
+Sign in with:
+
+```text
+Username: Kinetriq
+Password: 9711210569
 ```
 
 ## Local Configuration
@@ -86,7 +93,7 @@ Default local values are already configured in `.env.example`.
 Key settings:
 
 - `HOST=0.0.0.0`
-- `PORT=6000`
+- `PORT=9000`
 - `STORAGE_PROVIDER=file`
 - `DATA_FILE=./data/tasks.json`
 
@@ -108,19 +115,24 @@ This means tasks persist locally across restarts without requiring a database.
 Health check:
 
 ```bash
-curl http://127.0.0.1:6000/healthz
+curl http://127.0.0.1:9000/healthz
 ```
 
 Fetch tasks:
 
 ```bash
-curl http://127.0.0.1:6000/api/tasks
+curl -b cookies.txt http://127.0.0.1:9000/api/tasks
 ```
 
 Create a task:
 
 ```bash
-curl -X POST http://127.0.0.1:6000/api/tasks \
+curl -c cookies.txt -d "username=Kinetriq&password=9711210569&next=%2F" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  http://127.0.0.1:9000/login
+
+curl -X POST http://127.0.0.1:9000/api/tasks \
+  -b cookies.txt \
   -H "Content-Type: application/json" \
   -d '{
     "title":"Prepare board review",

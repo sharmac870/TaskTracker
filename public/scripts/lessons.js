@@ -5,6 +5,20 @@ const deleteSelectedButton = document.getElementById('delete-selected-lessons');
 
 let lessons = JSON.parse(lessonsList.dataset.lessons || '[]');
 
+async function parseJson(response) {
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    return null;
+  }
+
+  return response.json();
+}
+
+function redirectToLogin() {
+  const nextPath = encodeURIComponent(window.location.pathname + window.location.search);
+  window.location.assign(`/login?next=${nextPath}`);
+}
+
 function formatDate(value) {
   return new Date(value).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 }
@@ -46,12 +60,17 @@ lessonForm.addEventListener('submit', async (event) => {
       body: JSON.stringify(payload)
     });
 
-    if (!response.ok) {
-      const body = await response.json();
-      throw new Error(body.error || 'Unable to save lesson.');
+    if (response.status === 401) {
+      redirectToLogin();
+      return;
     }
 
-    const { lesson } = await response.json();
+    if (!response.ok) {
+      const body = await parseJson(response);
+      throw new Error(body?.error || 'Unable to save lesson.');
+    }
+
+    const { lesson } = await parseJson(response);
     lessons = [lesson, ...lessons];
     lessonForm.reset();
     renderLessons();
@@ -74,9 +93,14 @@ deleteSelectedButton.addEventListener('click', async () => {
       body: JSON.stringify({ ids })
     });
 
+    if (response.status === 401) {
+      redirectToLogin();
+      return;
+    }
+
     if (!response.ok) {
-      const body = await response.json();
-      throw new Error(body.error || 'Unable to delete lessons.');
+      const body = await parseJson(response);
+      throw new Error(body?.error || 'Unable to delete lessons.');
     }
 
     lessons = lessons.filter((lesson) => !ids.includes(lesson.id));
@@ -98,9 +122,13 @@ lessonsList.addEventListener('click', async (event) => {
 
   try {
     const response = await fetch(`/api/lessons/${card.dataset.id}`, { method: 'DELETE' });
+    if (response.status === 401) {
+      redirectToLogin();
+      return;
+    }
     if (!response.ok) {
-      const body = await response.json();
-      throw new Error(body.error || 'Unable to delete lesson.');
+      const body = await parseJson(response);
+      throw new Error(body?.error || 'Unable to delete lesson.');
     }
 
     lessons = lessons.filter((lesson) => lesson.id !== card.dataset.id);
