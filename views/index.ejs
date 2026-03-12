@@ -10,25 +10,25 @@
     <div class="backdrop"></div>
     <main class="shell">
       <section class="hero">
-        <div>
-          <p class="eyebrow">Startup execution cockpit</p>
+        <div class="hero-copy">
+          <p class="eyebrow">Execution workspace</p>
           <h1><%= appName %></h1>
-          <p class="lede">A lightweight planning workspace for leadership teams that need one place to record, update, and finish work.</p>
+          <p class="lede">Track priorities, keep owners visible, and move work across the board without the bulk of a full project suite.</p>
         </div>
         <div class="hero-card">
-          <span>Live board summary</span>
-          <strong><%= summary.total %> tasks tracked</strong>
-          <p><%= summary.inProgress %> active, <%= summary.blocked %> blocked, <%= summary.done %> completed.</p>
+          <span>Board snapshot</span>
+          <strong><%= summary.total %> open items</strong>
+          <p><%= summary.inProgress %> in motion, <%= summary.blocked %> blocked, <%= summary.done %> completed.</p>
         </div>
       </section>
 
       <section class="stats" id="stats">
-        <article><span>Total</span><strong><%= summary.total %></strong></article>
-        <article><span>Planned</span><strong><%= summary.planned %></strong></article>
-        <article><span>In Progress</span><strong><%= summary.inProgress %></strong></article>
-        <article><span>Blocked</span><strong><%= summary.blocked %></strong></article>
-        <article><span>Done</span><strong><%= summary.done %></strong></article>
-        <article><span>Overdue</span><strong><%= summary.overdue %></strong></article>
+        <button type="button" class="stat-tile is-active" data-stat-filter="total"><span>Total</span><strong><%= summary.total %></strong></button>
+        <button type="button" class="stat-tile" data-stat-filter="planned"><span>Planned</span><strong><%= summary.planned %></strong></button>
+        <button type="button" class="stat-tile" data-stat-filter="in-progress"><span>In Progress</span><strong><%= summary.inProgress %></strong></button>
+        <button type="button" class="stat-tile" data-stat-filter="blocked"><span>Blocked</span><strong><%= summary.blocked %></strong></button>
+        <button type="button" class="stat-tile" data-stat-filter="done"><span>Done</span><strong><%= summary.done %></strong></button>
+        <button type="button" class="stat-tile" data-stat-filter="overdue"><span>Overdue</span><strong><%= summary.overdue %></strong></button>
       </section>
 
       <section class="workspace">
@@ -36,7 +36,7 @@
           <div class="panel-head">
             <div>
               <p class="eyebrow">New task</p>
-              <h2>Capture work fast</h2>
+              <h2>Task details</h2>
             </div>
           </div>
           <form id="task-form" class="task-form">
@@ -88,9 +88,9 @@
           <div class="panel-head inline">
             <div>
               <p class="eyebrow">Task board</p>
-              <h2>Drive accountability</h2>
+              <h2>Task board</h2>
             </div>
-            <p class="hint">Move quickly between priorities without the weight of a full project suite.</p>
+            <p class="hint">Review status, filter down quickly, and keep the current workload readable.</p>
           </div>
           <section class="filters">
             <div class="filters-top">

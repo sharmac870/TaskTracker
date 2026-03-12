@@ -5,6 +5,9 @@ const resetButton = document.getElementById('reset-form');
 const template = document.getElementById('task-card-template');
 const clearFiltersButton = document.getElementById('clear-filters');
 const filterResult = document.getElementById('filter-result');
+const statTiles = Array.from(stats.querySelectorAll('[data-stat-filter]'));
+let draggedTaskId = null;
+let activeStatFilter = 'total';
 
 const fields = {
   id: document.getElementById('task-id'),
@@ -56,10 +59,41 @@ function calculateSummary(items) {
 
 function renderStats(items) {
   const summary = calculateSummary(items);
-  Array.from(stats.children).forEach((card) => {
+  statTiles.forEach((card) => {
     const label = card.querySelector('span').textContent;
     card.querySelector('strong').textContent = summary[label] ?? 0;
   });
+}
+
+function syncStatTiles() {
+  statTiles.forEach((tile) => {
+    tile.classList.toggle('is-active', tile.dataset.statFilter === activeStatFilter);
+  });
+}
+
+function applyStatFilter(filter) {
+  activeStatFilter = filter;
+
+  if (filter === 'planned') {
+    filters.status.value = 'Planned';
+    filters.due.value = '';
+  } else if (filter === 'in-progress') {
+    filters.status.value = 'In Progress';
+    filters.due.value = '';
+  } else if (filter === 'blocked') {
+    filters.status.value = 'Blocked';
+    filters.due.value = '';
+  } else if (filter === 'done') {
+    filters.status.value = 'Done';
+    filters.due.value = '';
+  } else if (filter === 'overdue') {
+    filters.status.value = '';
+    filters.due.value = 'overdue';
+  } else {
+    filters.status.value = '';
+    filters.due.value = '';
+    activeStatFilter = 'total';
+  }
 }
 
 function toDateKey(value) {
@@ -162,12 +196,13 @@ function renderBoard(items) {
   for (const status of window.__TECHZICK__.statuses) {
     const column = document.createElement('section');
     column.className = 'board-column';
+    column.dataset.status = status;
     column.innerHTML = `
       <header>
         <span>${status}</span>
         <strong>${items.filter((task) => task.status === status).length}</strong>
       </header>
-      <div class="column-list"></div>
+      <div class="column-list" data-status="${status}"></div>
     `;
 
     const list = column.querySelector('.column-list');
@@ -182,6 +217,7 @@ function renderBoard(items) {
     for (const task of columnTasks) {
       const node = template.content.firstElementChild.cloneNode(true);
       node.dataset.id = task.id;
+      node.setAttribute('draggable', 'true');
       node.querySelector('.priority-pill').textContent = task.priority;
       node.querySelector('h3').textContent = task.title;
       node.querySelector('.task-desc').textContent = task.description || 'No additional detail provided.';
@@ -199,6 +235,7 @@ function render() {
   refreshOwnerOptions();
   const filteredTasks = getFilteredTasks();
   renderStats(filteredTasks);
+  syncStatTiles();
   renderFilterResult(filteredTasks);
   renderBoard(filteredTasks);
 }
@@ -250,6 +287,29 @@ async function removeTask(id) {
   tasks = tasks.filter((task) => task.id !== id);
 }
 
+async function moveTaskToStatus(id, status) {
+  const task = tasks.find((item) => item.id === id);
+  if (!task || task.status === status) {
+    return;
+  }
+
+  await saveTask(
+    {
+      title: task.title,
+      description: task.description,
+      status,
+      priority: task.priority,
+      owner: task.owner,
+      dueDate: task.dueDate
+    },
+    id
+  );
+
+  if (fields.id.value === id) {
+    fields.status.value = status;
+  }
+}
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const payload = {
@@ -273,8 +333,16 @@ form.addEventListener('submit', async (event) => {
 resetButton.addEventListener('click', resetForm);
 
 Object.values(filters).forEach((control) => {
-  control.addEventListener('input', render);
-  control.addEventListener('change', render);
+  control.addEventListener('input', () => {
+    activeStatFilter = 'total';
+    syncStatTiles();
+    render();
+  });
+  control.addEventListener('change', () => {
+    activeStatFilter = 'total';
+    syncStatTiles();
+    render();
+  });
 });
 
 clearFiltersButton.addEventListener('click', () => {
@@ -284,6 +352,15 @@ clearFiltersButton.addEventListener('click', () => {
   filters.owner.value = '';
   filters.due.value = '';
   filters.sort.value = 'updated-desc';
+  activeStatFilter = 'total';
+  render();
+});
+
+stats.addEventListener('click', (event) => {
+  const tile = event.target.closest('[data-stat-filter]');
+  if (!tile) return;
+
+  applyStatFilter(tile.dataset.statFilter);
   render();
 });
 
@@ -309,6 +386,61 @@ board.addEventListener('click', async (event) => {
     } catch (error) {
       window.alert(error.message);
     }
+  }
+});
+
+board.addEventListener('dragstart', (event) => {
+  const card = event.target.closest('.task-card');
+  if (!card) return;
+
+  draggedTaskId = card.dataset.id;
+  card.classList.add('dragging');
+  event.dataTransfer.effectAllowed = 'move';
+  event.dataTransfer.setData('text/plain', draggedTaskId);
+});
+
+board.addEventListener('dragend', (event) => {
+  const card = event.target.closest('.task-card');
+  if (card) {
+    card.classList.remove('dragging');
+  }
+
+  draggedTaskId = null;
+  board.querySelectorAll('.column-list.drop-target').forEach((list) => list.classList.remove('drop-target'));
+});
+
+board.addEventListener('dragover', (event) => {
+  const list = event.target.closest('.column-list');
+  if (!list || !draggedTaskId) return;
+
+  event.preventDefault();
+  event.dataTransfer.dropEffect = 'move';
+});
+
+board.addEventListener('dragenter', (event) => {
+  const list = event.target.closest('.column-list');
+  if (!list || !draggedTaskId) return;
+  list.classList.add('drop-target');
+});
+
+board.addEventListener('dragleave', (event) => {
+  const list = event.target.closest('.column-list');
+  if (!list || list.contains(event.relatedTarget)) return;
+  list.classList.remove('drop-target');
+});
+
+board.addEventListener('drop', async (event) => {
+  const list = event.target.closest('.column-list');
+  if (!list || !draggedTaskId) return;
+
+  event.preventDefault();
+  list.classList.remove('drop-target');
+
+  try {
+    await moveTaskToStatus(draggedTaskId, list.dataset.status);
+    render();
+  } catch (error) {
+    window.alert(error.message);
   }
 });
 
