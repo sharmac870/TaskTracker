@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lessons Learned | <%= appName %></title>
+    <link rel="stylesheet" href="/styles/site.css" />
+  </head>
+  <body>
+    <div class="backdrop"></div>
+    <main class="shell shell-narrow">
+      <section class="hero hero-compact">
+        <div class="hero-copy">
+          <p class="eyebrow">Startup memory</p>
+          <h1>Lessons Learned</h1>
+          <p class="lede">Keep a written record of hard-earned lessons so the team can reuse wins and avoid repeat mistakes.</p>
+        </div>
+        <div class="hero-card">
+          <span>Total lessons</span>
+          <strong><%= lessons.length %></strong>
+          <p>Review the strongest patterns from execution, customers, delivery, and team operations.</p>
+        </div>
+      </section>
+
+      <section class="lessons-layout">
+        <section class="composer">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">New entry</p>
+              <h2>Add a lesson</h2>
+            </div>
+          </div>
+          <form id="lesson-form" class="task-form">
+            <label>
+              <span>Title</span>
+              <input type="text" id="lesson-title" maxlength="140" required />
+            </label>
+            <label>
+              <span>Stage</span>
+              <input type="text" id="lesson-stage" maxlength="80" placeholder="Fundraising, launch, hiring, customer discovery" />
+            </label>
+            <label>
+              <span>Lesson</span>
+              <textarea id="lesson-summary" rows="5" placeholder="What did the team learn?" required></textarea>
+            </label>
+            <label>
+              <span>Impact</span>
+              <textarea id="lesson-impact" rows="4" placeholder="What changed as a result?"></textarea>
+            </label>
+            <div class="form-actions">
+              <button type="submit" class="primary">Save lesson</button>
+              <a href="/" class="ghost link-button">Back to board</a>
+            </div>
+          </form>
+        </section>
+
+        <section class="board-panel">
+          <div class="panel-head inline">
+            <div>
+              <p class="eyebrow">Archive</p>
+              <h2>Journey notes</h2>
+            </div>
+            <p class="hint">Short, specific lessons tend to stay useful longer than broad retrospectives.</p>
+          </div>
+
+          <section class="lessons-list" id="lessons-list" data-lessons='<%- JSON.stringify(lessons) %>'></section>
+        </section>
+      </section>
+    </main>
+
+    <template id="lesson-card-template">
+      <article class="lesson-card">
+        <div class="lesson-meta">
+          <span class="priority-pill lesson-stage"></span>
+          <time class="lesson-date"></time>
+        </div>
+        <h3 class="lesson-title"></h3>
+        <p class="lesson-summary"></p>
+        <div class="lesson-impact-block">
+          <span>Impact</span>
+          <p class="lesson-impact"></p>
+        </div>
+      </article>
+    </template>
+
+    <script src="/scripts/lessons.js" defer></script>
+  </body>
+</html>

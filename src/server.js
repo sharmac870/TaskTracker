@@ -3,11 +3,13 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const { createStorage, summarize, STATUSES, PRIORITIES } = require('./storage');
+const { createLessonStorage } = require('./lessons');
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const host = process.env.HOST || '0.0.0.0';
 const storage = createStorage();
+const lessonStorage = createLessonStorage();
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '..', 'views'));
@@ -22,8 +24,21 @@ app.get('/', async (req, res, next) => {
       appName: process.env.APP_NAME || 'Techzick Planner',
       tasks,
       summary: summarize(tasks),
+      lessonCount: (await lessonStorage.listLessons()).length,
       statuses: STATUSES,
       priorities: PRIORITIES
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/lessons', async (req, res, next) => {
+  try {
+    const lessons = await lessonStorage.listLessons();
+    res.render('lessons', {
+      appName: process.env.APP_NAME || 'Techzick Planner',
+      lessons
     });
   } catch (error) {
     next(error);
@@ -72,13 +87,31 @@ app.delete('/api/tasks/:id', async (req, res, next) => {
   }
 });
 
+app.get('/api/lessons', async (req, res, next) => {
+  try {
+    const lessons = await lessonStorage.listLessons();
+    res.json({ lessons });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/lessons', async (req, res, next) => {
+  try {
+    const lesson = await lessonStorage.createLesson(req.body);
+    res.status(201).json({ lesson });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get('/healthz', async (req, res) => {
   res.json({ ok: true, app: 'techzick-planner' });
 });
 
 app.use((error, req, res, next) => {
   console.error(error);
-  const status = error.message === 'Task title is required.' ? 400 : 500;
+  const status = ['Task title is required.', 'Lesson title is required.', 'Lesson summary is required.'].includes(error.message) ? 400 : 500;
   res.status(status).json({ error: error.message || 'Unexpected server error.' });
 });
 

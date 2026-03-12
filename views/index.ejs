@@ -15,10 +15,22 @@
           <h1><%= appName %></h1>
           <p class="lede">Track priorities, keep owners visible, and move work across the board without the bulk of a full project suite.</p>
         </div>
-        <div class="hero-card">
-          <span>Board snapshot</span>
-          <strong><%= summary.total %> open items</strong>
-          <p><%= summary.inProgress %> in motion, <%= summary.blocked %> blocked, <%= summary.done %> completed.</p>
+        <div class="hero-side">
+          <div class="hero-card">
+            <span>Board snapshot</span>
+            <strong><%= summary.total %> open items</strong>
+            <p><%= summary.inProgress %> in motion, <%= summary.blocked %> blocked, <%= summary.done %> completed.</p>
+          </div>
+          <a href="/lessons" class="insight-card insight-card-compact">
+            <div>
+              <p class="eyebrow">Startup memory</p>
+              <h2>Lessons Learned</h2>
+            </div>
+            <div class="insight-metric">
+              <span>Entries</span>
+              <strong><%= lessonCount %></strong>
+            </div>
+          </a>
         </div>
       </section>
 

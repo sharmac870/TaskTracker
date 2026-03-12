@@ -57,8 +57,14 @@ select {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: 18px;
-  align-items: center;
+  align-items: stretch;
   margin-bottom: 18px;
+}
+
+.hero-side {
+  display: grid;
+  gap: 12px;
+  align-content: start;
 }
 
 .eyebrow {
@@ -146,6 +152,78 @@ h1 {
   margin-bottom: 18px;
 }
 
+.insight-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, rgba(21, 47, 87, 0.95), rgba(34, 75, 128, 0.92));
+  color: white;
+  text-decoration: none;
+  box-shadow: 0 18px 40px rgba(21, 47, 87, 0.16);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.insight-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 44px rgba(21, 47, 87, 0.22);
+}
+
+.insight-card .eyebrow,
+.insight-card .hint,
+.insight-card span {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.insight-card h2 {
+  margin: 0 0 6px;
+  font-size: 1.6rem;
+}
+
+.insight-card-compact {
+  grid-template-columns: minmax(0, 1fr) 84px;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(21, 47, 87, 0.16);
+}
+
+.insight-card-compact h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.15;
+}
+
+.insight-card-compact .insight-metric {
+  padding-left: 12px;
+}
+
+.insight-card-compact .insight-metric strong {
+  margin-top: 4px;
+  font-size: 1.5rem;
+}
+
+.insight-metric {
+  border-left: 1px solid rgba(255, 255, 255, 0.16);
+  padding-left: 16px;
+}
+
+.insight-metric span {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.68rem;
+}
+
+.insight-metric strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 2rem;
+}
+
 .stat-tile {
   border-radius: 14px;
   padding: 13px 14px;
@@ -182,6 +260,20 @@ h1 {
 .workspace {
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
+  gap: 18px;
+}
+
+.shell-narrow {
+  width: min(1180px, calc(100% - 40px));
+}
+
+.hero.hero-compact {
+  grid-template-columns: minmax(0, 1fr) 260px;
+}
+
+.lessons-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
   gap: 18px;
 }
 
@@ -291,6 +383,13 @@ textarea {
   display: flex;
   gap: 10px;
   margin-top: 4px;
+}
+
+.link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 button {
@@ -443,6 +542,66 @@ button:hover {
   font-size: 0.88rem;
 }
 
+.lessons-list {
+  display: grid;
+  gap: 12px;
+}
+
+.lesson-card {
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow);
+}
+
+.lesson-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.lesson-date {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.lesson-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.18rem;
+}
+
+.lesson-card p {
+  margin: 0;
+}
+
+.lesson-summary {
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.lesson-impact-block {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.lesson-impact-block span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+}
+
+.lesson-impact {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 @keyframes rise {
   from {
     opacity: 0;
@@ -456,8 +615,15 @@ button:hover {
 
 @media (max-width: 1080px) {
   .hero,
-  .workspace {
+  .workspace,
+  .lessons-layout,
+  .hero.hero-compact {
     grid-template-columns: 1fr;
+  }
+
+  .hero-side {
+    grid-template-columns: 1fr 220px;
+    align-items: stretch;
   }
 
   .composer {
@@ -481,6 +647,21 @@ button:hover {
 
   .stats {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .insight-card {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-side {
+    grid-template-columns: 1fr;
+  }
+
+  .insight-metric {
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    padding-left: 0;
+    padding-top: 12px;
   }
 
   .grid.two,
