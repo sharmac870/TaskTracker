@@ -33,25 +33,37 @@
               <strong><%= lessonCount %></strong>
             </div>
           </a>
-          <div class="hero-card">
-            <span>Board snapshot</span>
-            <strong><%= summary.total %> open items</strong>
-            <p><%= summary.inProgress %> in motion, <%= summary.blocked %> blocked, <%= summary.done %> completed.</p>
-          </div>
         </div>
       </section>
 
-      <section class="stats" id="stats">
-        <button type="button" class="stat-tile is-active" data-stat-filter="total"><span>Total</span><strong><%= summary.total %></strong></button>
-        <button type="button" class="stat-tile" data-stat-filter="planned"><span>Planned</span><strong><%= summary.planned %></strong></button>
-        <button type="button" class="stat-tile" data-stat-filter="in-progress"><span>In Progress</span><strong><%= summary.inProgress %></strong></button>
-        <button type="button" class="stat-tile" data-stat-filter="blocked"><span>Blocked</span><strong><%= summary.blocked %></strong></button>
-        <button type="button" class="stat-tile" data-stat-filter="done"><span>Done</span><strong><%= summary.done %></strong></button>
-        <button type="button" class="stat-tile" data-stat-filter="overdue"><span>Overdue</span><strong><%= summary.overdue %></strong></button>
+      <section class="surface-band surface-band-summary">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Summary</p>
+            <h2>Execution overview</h2>
+          </div>
+          <p class="hint">Use the summary tiles to narrow the board to the tasks that need attention first.</p>
+        </div>
+        <section class="stats" id="stats">
+          <button type="button" class="stat-tile is-active" data-stat-filter="total"><span>Total</span><strong><%= summary.total %></strong></button>
+          <button type="button" class="stat-tile" data-stat-filter="planned"><span>Planned</span><strong><%= summary.planned %></strong></button>
+          <button type="button" class="stat-tile" data-stat-filter="in-progress"><span>In Progress</span><strong><%= summary.inProgress %></strong></button>
+          <button type="button" class="stat-tile" data-stat-filter="blocked"><span>Blocked</span><strong><%= summary.blocked %></strong></button>
+          <button type="button" class="stat-tile" data-stat-filter="done"><span>Done</span><strong><%= summary.done %></strong></button>
+          <button type="button" class="stat-tile" data-stat-filter="overdue"><span>Overdue</span><strong><%= summary.overdue %></strong></button>
+        </section>
       </section>
 
-      <section class="workspace">
-        <section class="composer">
+      <section class="surface-band surface-band-work">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Workspace</p>
+            <h2>Plan and execute</h2>
+          </div>
+          <p class="hint">Create tasks on the left, then review, filter, and move active work on the right.</p>
+        </div>
+        <section class="workspace">
+          <section class="composer">
           <div class="panel-head">
             <div>
               <p class="eyebrow">New task</p>
@@ -190,6 +202,7 @@
           </section>
           <div id="board" class="board" data-tasks='<%- JSON.stringify(tasks) %>'></div>
           <div id="task-list" class="task-list hidden" aria-hidden="true"></div>
+          </section>
         </section>
       </section>
     </main>

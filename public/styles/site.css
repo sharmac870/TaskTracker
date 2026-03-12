@@ -58,7 +58,7 @@ select {
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: 18px;
   align-items: stretch;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .hero-side {
@@ -101,6 +101,60 @@ h1 {
 .hero-copy {
   display: grid;
   gap: 8px;
+  padding: 22px 24px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 252, 247, 0.94), rgba(247, 242, 233, 0.8));
+  border: 1px solid rgba(255, 255, 255, 0.66);
+  box-shadow: var(--shadow);
+}
+
+.surface-band {
+  position: relative;
+  margin-bottom: 20px;
+  padding: 18px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 253, 249, 0.82), rgba(241, 235, 224, 0.64));
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  box-shadow: var(--shadow);
+}
+
+.surface-band::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  border-radius: 24px 0 0 24px;
+  background: linear-gradient(180deg, rgba(11, 93, 102, 0.78), rgba(244, 197, 106, 0.64));
+}
+
+.surface-band-summary {
+  background: linear-gradient(180deg, rgba(255, 253, 248, 0.86), rgba(244, 239, 230, 0.72));
+}
+
+.surface-band-work {
+  background:
+    linear-gradient(180deg, rgba(251, 248, 242, 0.92), rgba(240, 233, 222, 0.82)),
+    radial-gradient(circle at top right, rgba(11, 93, 102, 0.09), transparent 28%);
+}
+
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 0 0 16px;
+  padding: 2px 4px 14px 10px;
+  border-bottom: 1px solid rgba(31, 35, 48, 0.08);
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.section-heading .hint {
+  margin: 0;
+  max-width: 52ch;
 }
 
 .hidden {
@@ -204,7 +258,7 @@ h1 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 10px;
-  margin-bottom: 18px;
+  margin-bottom: 0;
 }
 
 .insight-card {
@@ -315,7 +369,7 @@ h1 {
 .workspace {
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
-  gap: 18px;
+  gap: 20px;
 }
 
 .shell-narrow {
@@ -335,14 +389,35 @@ h1 {
 .composer,
 .board-panel {
   border-radius: 20px;
-  padding: 20px;
+  padding: 22px;
   border: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+
+.composer::before,
+.board-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, rgba(11, 93, 102, 0.88), rgba(244, 197, 106, 0.7));
+}
+
+.composer {
+  background:
+    linear-gradient(180deg, rgba(255, 252, 247, 0.97), rgba(246, 239, 229, 0.9));
 }
 
 .composer {
   align-self: start;
   position: sticky;
   top: 18px;
+}
+
+.board-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(249, 244, 236, 0.92));
 }
 
 .panel-head.inline {
@@ -386,6 +461,7 @@ h1 {
   padding: 16px;
   margin-bottom: 16px;
   border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.52);
 }
 
 .filters-top {
@@ -518,6 +594,7 @@ button:hover {
 .task-list {
   display: grid;
   gap: 10px;
+  padding: 4px 2px 2px;
 }
 
 .board-column {
@@ -842,6 +919,11 @@ button:hover {
     align-items: stretch;
   }
 
+  .section-heading {
+    display: grid;
+    align-items: start;
+  }
+
   .board-tools {
     align-items: end;
     flex-direction: column;
@@ -858,6 +940,7 @@ button:hover {
   .filter-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
 }
 
 @media (max-width: 720px) {
@@ -876,6 +959,14 @@ button:hover {
 
   .hero-side {
     grid-template-columns: 1fr;
+  }
+
+  .hero-copy,
+  .surface-band,
+  .composer,
+  .board-panel {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .insight-metric {
