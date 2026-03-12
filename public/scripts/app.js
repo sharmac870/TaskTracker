@@ -304,6 +304,28 @@ function populateForm(task) {
   fields.title.focus();
 }
 
+async function handleTaskAction(taskId, action) {
+  const task = tasks.find((item) => item.id === taskId);
+  if (!task) return;
+
+  if (action === 'edit') {
+    populateForm(task);
+    return;
+  }
+
+  if (action === 'delete') {
+    const confirmed = window.confirm(`Delete task "${task.title}"?`);
+    if (!confirmed) return;
+
+    try {
+      await removeTask(task.id);
+      render();
+    } catch (error) {
+      window.alert(error.message);
+    }
+  }
+}
+
 async function saveTask(payload, id) {
   const response = await fetch(id ? `/api/tasks/${id}` : '/api/tasks', {
     method: id ? 'PUT' : 'POST',
@@ -431,24 +453,18 @@ board.addEventListener('click', async (event) => {
 
   const card = event.target.closest('.task-card');
   if (!card) return;
-  const task = tasks.find((item) => item.id === card.dataset.id);
-  if (!task) return;
+  await handleTaskAction(card.dataset.id, action);
+});
 
-  if (action === 'edit') {
-    populateForm(task);
-    return;
-  }
+taskList.addEventListener('click', async (event) => {
+  const actionTarget = event.target.closest('[data-action]');
+  const action = actionTarget?.dataset.action;
+  if (!action) return;
 
-  if (action === 'delete') {
-    const confirmed = window.confirm(`Delete task "${task.title}"?`);
-    if (!confirmed) return;
-    try {
-      await removeTask(task.id);
-      render();
-    } catch (error) {
-      window.alert(error.message);
-    }
-  }
+  const row = event.target.closest('.task-row');
+  if (!row) return;
+
+  await handleTaskAction(row.dataset.id, action);
 });
 
 board.addEventListener('dragstart', (event) => {
