@@ -6,6 +6,7 @@ const template = document.getElementById('task-card-template');
 const rowTemplate = document.getElementById('task-row-template');
 const clearFiltersButton = document.getElementById('clear-filters');
 const filterResult = document.getElementById('filter-result');
+const initialTasksScript = document.getElementById('initial-tasks');
 const statTiles = Array.from(stats.querySelectorAll('[data-stat-filter]'));
 const viewToggle = document.getElementById('view-toggle');
 const taskList = document.getElementById('task-list');
@@ -35,7 +36,21 @@ const filters = {
   sort: document.getElementById('filter-sort')
 };
 
-let tasks = JSON.parse(board.dataset.tasks || '[]');
+function readInitialTasks() {
+  if (!initialTasksScript) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(initialTasksScript.textContent || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error('Failed to parse initial tasks payload.', error);
+    return [];
+  }
+}
+
+let tasks = readInitialTasks();
 
 const priorityWeight = {
   Low: 1,

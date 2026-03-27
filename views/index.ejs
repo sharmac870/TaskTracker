@@ -200,7 +200,7 @@
             </div>
             <p class="filter-result" id="filter-result"></p>
           </section>
-          <div id="board" class="board" data-tasks='<%- JSON.stringify(tasks) %>'></div>
+          <div id="board" class="board"></div>
           <div id="task-list" class="task-list hidden" aria-hidden="true"></div>
           </section>
         </section>
@@ -262,6 +262,7 @@
         priorities: <%- JSON.stringify(priorities) %>
       };
     </script>
+    <script id="initial-tasks" type="application/json"><%- JSON.stringify(tasks).replace(/</g, '\\u003c') %></script>
     <script src="/scripts/app.js" defer></script>
   </body>
 </html>
