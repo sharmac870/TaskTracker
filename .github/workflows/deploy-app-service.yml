@@ -8,7 +8,7 @@ on:
 
 env:
   NODE_VERSION: "20"
-  AZURE_WEBAPP_NAME: ${{ vars.AZURE_WEBAPP_NAME || 'techzickweb' }}
+  AZURE_WEBAPP_NAME: ${{ vars.AZURE_WEBAPP_NAME || 'taskplanner' }}
 
 jobs:
   build-and-deploy:
