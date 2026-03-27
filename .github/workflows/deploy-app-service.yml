@@ -1,4 +1,4 @@
-name: Deploy Techzick Planner to Azure App Service
+name: Deploy TaskTracker to Azure App Service
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 
 env:
   NODE_VERSION: "20"
+  AZURE_WEBAPP_NAME: ${{ vars.AZURE_WEBAPP_NAME || 'techzickweb' }}
 
 jobs:
   build-and-deploy:
@@ -28,6 +29,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate deployment configuration
+        env:
+          AZUREAPPSERVICE_PUBLISHPROFILE: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+        run: |
+          if [ -z "${AZURE_WEBAPP_NAME}" ]; then
+            echo "AZURE_WEBAPP_NAME is not set."
+            exit 1
+          fi
+
+          if [ -z "${AZUREAPPSERVICE_PUBLISHPROFILE}" ]; then
+            echo "AZUREAPPSERVICE_PUBLISHPROFILE secret is not configured."
+            exit 1
+          fi
+
+          echo "Deploying to Azure App Service: ${AZURE_WEBAPP_NAME}"
+
       - name: Prepare deployment package
         run: |
           zip -r release.zip . \
@@ -39,6 +56,6 @@ jobs:
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: release.zip
