@@ -1,7 +1,8 @@
 const fs = require('fs/promises');
 const path = require('path');
-const sql = require('mssql');
 const { randomUUID } = require('crypto');
+
+const PROJECT_ROOT = path.join(__dirname, '..');
 
 const STATUSES = ['Planned', 'In Progress', 'Blocked', 'Done'];
 const PRIORITIES = ['Low', 'Medium', 'High', 'Critical'];
@@ -46,12 +47,20 @@ class FileStorage {
   async readTasks() {
     await this.ensureFile();
     const raw = await fs.readFile(this.filePath, 'utf8');
-    return JSON.parse(raw);
+    try {
+      return JSON.parse(raw);
+    } catch {
+      console.error(`[storage] tasks.json is corrupt — resetting to empty. File: ${this.filePath}`);
+      await fs.writeFile(this.filePath, '[]', 'utf8');
+      return [];
+    }
   }
 
   async writeTasks(tasks) {
     await this.ensureFile();
-    await fs.writeFile(this.filePath, JSON.stringify(tasks, null, 2), 'utf8');
+    const tmp = `${this.filePath}.tmp`;
+    await fs.writeFile(tmp, JSON.stringify(tasks, null, 2), 'utf8');
+    await fs.rename(tmp, this.filePath);
   }
 
   async listTasks() {
@@ -98,7 +107,8 @@ class SqlStorage {
 
   async pool() {
     if (!this.poolPromise) {
-      this.poolPromise = sql.connect(this.config);
+      this._sql = require('mssql');
+      this.poolPromise = this._sql.connect(this.config);
     }
     return this.poolPromise;
   }
@@ -161,6 +171,7 @@ class SqlStorage {
     const task = normalizeTask(input);
     validateTask(task);
     const pool = await this.pool();
+    const sql = this._sql;
     await pool.request()
       .input('id', sql.NVarChar(64), task.id)
       .input('title', sql.NVarChar(200), task.title)
@@ -183,6 +194,7 @@ class SqlStorage {
   async updateTask(id, input) {
     await this.init();
     const pool = await this.pool();
+    const sql = this._sql;
     const existingResult = await pool.request().input('id', sql.NVarChar(64), id).query('SELECT * FROM Tasks WHERE id = @id');
     if (!existingResult.recordset.length) return null;
     const existing = this.mapRecord(existingResult.recordset[0]);
@@ -218,6 +230,7 @@ class SqlStorage {
   async deleteTask(id) {
     await this.init();
     const pool = await this.pool();
+    const sql = this._sql;
     const result = await pool.request().input('id', sql.NVarChar(64), id).query('DELETE FROM Tasks WHERE id = @id');
     return result.rowsAffected[0] > 0;
   }
@@ -238,7 +251,10 @@ function createStorage() {
       }
     });
   }
-  return new FileStorage(process.env.DATA_FILE || './data/tasks.json');
+  const dataFile = process.env.DATA_FILE
+    ? path.resolve(PROJECT_ROOT, process.env.DATA_FILE)
+    : path.join(PROJECT_ROOT, 'data', 'tasks.json');
+  return new FileStorage(dataFile);
 }
 
 function summarize(tasks) {

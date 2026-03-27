@@ -259,7 +259,13 @@ app.post('/api/lessons/delete-many', requireAuth, async (req, res, next) => {
 });
 
 app.get('/healthz', async (req, res) => {
-  res.json({ ok: true, app: 'kinetriq-idc' });
+  try {
+    await storage.listTasks();
+    res.json({ ok: true, app: 'kinetriq-idc' });
+  } catch (err) {
+    console.error('[healthz] storage check failed:', err.message);
+    res.status(503).json({ ok: false, app: 'kinetriq-idc', error: 'Storage unavailable.' });
+  }
 });
 
 app.use((error, req, res, next) => {

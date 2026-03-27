@@ -2,16 +2,19 @@ const fs = require('fs/promises');
 const path = require('path');
 const { randomUUID } = require('crypto');
 
+const PROJECT_ROOT = path.join(__dirname, '..');
+
 function resolveLessonsFile() {
   if (process.env.LESSONS_FILE) {
-    return process.env.LESSONS_FILE;
+    return path.resolve(PROJECT_ROOT, process.env.LESSONS_FILE);
   }
 
   if (process.env.DATA_FILE) {
-    return path.join(path.dirname(process.env.DATA_FILE), 'lessons.json');
+    const dataDir = path.dirname(path.resolve(PROJECT_ROOT, process.env.DATA_FILE));
+    return path.join(dataDir, 'lessons.json');
   }
 
-  return './data/lessons.json';
+  return path.join(PROJECT_ROOT, 'data', 'lessons.json');
 }
 
 class LessonStorage {
@@ -31,12 +34,20 @@ class LessonStorage {
   async readLessons() {
     await this.ensureFile();
     const raw = await fs.readFile(this.filePath, 'utf8');
-    return JSON.parse(raw);
+    try {
+      return JSON.parse(raw);
+    } catch {
+      console.error(`[storage] lessons.json is corrupt — resetting to empty. File: ${this.filePath}`);
+      await fs.writeFile(this.filePath, '[]', 'utf8');
+      return [];
+    }
   }
 
   async writeLessons(lessons) {
     await this.ensureFile();
-    await fs.writeFile(this.filePath, JSON.stringify(lessons, null, 2), 'utf8');
+    const tmp = `${this.filePath}.tmp`;
+    await fs.writeFile(tmp, JSON.stringify(lessons, null, 2), 'utf8');
+    await fs.rename(tmp, this.filePath);
   }
 
   async listLessons() {
