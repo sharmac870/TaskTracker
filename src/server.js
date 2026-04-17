@@ -5,12 +5,14 @@ const express = require('express');
 const path = require('path');
 const { createStorage, summarize, STATUSES, PRIORITIES } = require('./storage');
 const { createLessonStorage } = require('./lessons');
+const { createCustomerStorage, CUSTOMER_STATUSES } = require('./customers');
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const host = process.env.HOST || '0.0.0.0';
 const storage = createStorage();
 const lessonStorage = createLessonStorage();
+const customerStorage = createCustomerStorage();
 const authCookieName = 'kinetriq_session';
 const authUsername = 'Kinetriq';
 const authPassword = '9711210569';
@@ -151,6 +153,7 @@ app.get('/', requireAuth, async (req, res, next) => {
       tasks,
       summary: summarize(tasks),
       lessonCount: (await lessonStorage.listLessons()).length,
+      customerCount: (await customerStorage.listCustomers()).length,
       currentUser: req.user,
       statuses: STATUSES,
       priorities: PRIORITIES
@@ -245,6 +248,62 @@ app.delete('/api/lessons/:id', requireAuth, async (req, res, next) => {
   }
 });
 
+app.get('/customers', requireAuth, async (req, res, next) => {
+  try {
+    const customers = await customerStorage.listCustomers();
+    res.render('customers', {
+      appName: process.env.APP_NAME || 'Kinetriq IDC',
+      customers,
+      customerStatuses: CUSTOMER_STATUSES,
+      currentUser: req.user
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/customers', requireAuth, async (req, res, next) => {
+  try {
+    const customers = await customerStorage.listCustomers();
+    res.json({ customers });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/customers', requireAuth, async (req, res, next) => {
+  try {
+    const customer = await customerStorage.createCustomer(req.body);
+    res.status(201).json({ customer });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.put('/api/customers/:id', requireAuth, async (req, res, next) => {
+  try {
+    const customer = await customerStorage.updateCustomer(req.params.id, req.body);
+    if (!customer) {
+      return res.status(404).json({ error: 'Customer not found.' });
+    }
+    res.json({ customer });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/api/customers/:id', requireAuth, async (req, res, next) => {
+  try {
+    const deleted = await customerStorage.deleteCustomer(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ error: 'Customer not found.' });
+    }
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.post('/api/lessons/delete-many', requireAuth, async (req, res, next) => {
   try {
     const ids = Array.isArray(req.body.ids) ? req.body.ids : [];
@@ -270,7 +329,7 @@ app.get('/healthz', async (req, res) => {
 
 app.use((error, req, res, next) => {
   console.error(error);
-  const status = ['Task title is required.', 'Lesson title is required.', 'Lesson summary is required.', 'Select at least one lesson.'].includes(error.message) ? 400 : 500;
+  const status = ['Task title is required.', 'Lesson title is required.', 'Lesson summary is required.', 'Select at least one lesson.', 'Customer name is required.'].includes(error.message) ? 400 : 500;
   res.status(status).json({ error: error.message || 'Unexpected server error.' });
 });
 

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customers | <%= appName %></title>
+    <link rel="stylesheet" href="/styles/site.css" />
+  </head>
+  <body>
+    <div class="backdrop"></div>
+    <main class="shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Customer pipeline</p>
+          <h1>Customers</h1>
+          <p class="lede">Track every customer by sector, region, product, and engagement status so nothing falls through the cracks.</p>
+        </div>
+        <div class="hero-side">
+          <form method="post" action="/logout" class="session-card">
+            <div>
+              <p class="eyebrow">Signed in</p>
+              <strong><%= currentUser?.username %></strong>
+            </div>
+            <button type="submit" class="ghost">Logout</button>
+          </form>
+          <div class="hero-card">
+            <span>Total customers</span>
+            <strong id="hero-total"><%= customers.length %></strong>
+            <p>Across all sectors, regions, and engagement stages.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="surface-band surface-band-summary">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Summary</p>
+            <h2>Pipeline overview</h2>
+          </div>
+          <p class="hint">Click a tile to filter the list by status.</p>
+        </div>
+        <section class="stats" id="customer-stats">
+          <button type="button" class="stat-tile is-active" data-status-filter="">
+            <span>Total</span><strong id="stat-total"><%= customers.length %></strong>
+          </button>
+          <% ['Prospect', 'In Discussion', 'Pilot', 'Onboarded', 'Churned'].forEach(function(s) { %>
+            <button type="button" class="stat-tile" data-status-filter="<%= s %>">
+              <span><%= s %></span>
+              <strong><%= customers.filter(c => c.status === s).length %></strong>
+            </button>
+          <% }) %>
+        </section>
+      </section>
+
+      <section class="surface-band surface-band-work">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Workspace</p>
+            <h2>Add and manage</h2>
+          </div>
+          <p class="hint">Add customers on the left, filter and track on the right.</p>
+        </div>
+        <section class="workspace customers-workspace">
+          <section class="composer">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow" id="form-eyebrow">New customer</p>
+                <h2 id="form-heading">Customer details</h2>
+              </div>
+            </div>
+            <form id="customer-form" class="task-form">
+              <input type="hidden" id="customer-id" />
+              <label>
+                <span>Customer name</span>
+                <input type="text" id="customer-name" maxlength="200" required placeholder="Organisation name" />
+              </label>
+              <div class="grid two">
+                <label>
+                  <span>Sector</span>
+                  <input type="text" id="customer-sector" maxlength="120" placeholder="e.g. Banking, Retail" />
+                </label>
+                <label>
+                  <span>Region</span>
+                  <input type="text" id="customer-region" maxlength="120" placeholder="e.g. APAC, North" />
+                </label>
+              </div>
+              <label>
+                <span>Reference point</span>
+                <input type="text" id="customer-reference" maxlength="200" placeholder="Key contact or referral" />
+              </label>
+              <label>
+                <span>Product purchased</span>
+                <input type="text" id="customer-product" maxlength="200" placeholder="Product or solution" />
+              </label>
+              <label>
+                <span>Status</span>
+                <select id="customer-status">
+                  <% customerStatuses.forEach(function(s) { %>
+                    <option value="<%= s %>"><%= s %></option>
+                  <% }) %>
+                </select>
+              </label>
+              <label>
+                <span>Notes</span>
+                <textarea id="customer-notes" rows="3" placeholder="Context, next steps, observations"></textarea>
+              </label>
+              <div class="form-actions">
+                <button type="submit" class="primary" id="form-submit">Save customer</button>
+                <button type="button" class="ghost" id="reset-customer-form">Clear</button>
+                <a href="/" class="ghost link-button">Dashboard</a>
+              </div>
+            </form>
+          </section>
+
+          <section class="board-panel">
+            <div class="panel-head inline">
+              <div>
+                <p class="eyebrow">Directory</p>
+                <h2>Customer list</h2>
+              </div>
+              <div class="board-tools">
+                <p class="hint">Filter, edit, or track engagement for each customer.</p>
+              </div>
+            </div>
+
+            <section class="filters">
+              <div class="filters-top">
+                <div>
+                  <p class="eyebrow">Filters</p>
+                  <h3>Narrow the list</h3>
+                </div>
+                <button type="button" class="ghost" id="clear-customer-filters">Reset filters</button>
+              </div>
+              <div class="filter-grid customer-filter-grid">
+                <label>
+                  <span>Search</span>
+                  <input type="search" id="filter-customer-search" placeholder="Name, reference, product" />
+                </label>
+                <label>
+                  <span>Sector</span>
+                  <select id="filter-customer-sector">
+                    <option value="">All sectors</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Region</span>
+                  <select id="filter-customer-region">
+                    <option value="">All regions</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Status</span>
+                  <select id="filter-customer-status">
+                    <option value="">All statuses</option>
+                    <% customerStatuses.forEach(function(s) { %>
+                      <option value="<%= s %>"><%= s %></option>
+                    <% }) %>
+                  </select>
+                </label>
+              </div>
+              <p class="filter-result" id="customer-filter-result"></p>
+            </section>
+
+            <div id="customer-list" class="customer-list"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <template id="customer-row-template">
+      <article class="customer-row">
+        <div class="customer-row-main">
+          <div class="customer-row-title">
+            <h3 class="customer-name"></h3>
+            <p class="customer-notes-text"></p>
+          </div>
+          <div class="customer-row-meta">
+            <span class="customer-status-badge"></span>
+            <span class="customer-meta-pill customer-sector-pill"></span>
+            <span class="customer-meta-pill customer-region-pill"></span>
+            <span class="customer-meta-pill customer-product-pill"></span>
+            <span class="customer-meta-pill customer-reference-pill"></span>
+          </div>
+        </div>
+        <div class="task-actions">
+          <button class="mini" data-action="edit-customer">Edit</button>
+          <button class="mini danger" data-action="delete-customer">Delete</button>
+        </div>
+      </article>
+    </template>
+
+    <script id="initial-customers" type="application/json"><%- JSON.stringify(customers).replace(/</g, '\\u003c') %></script>
+    <script>
+      window.__CUSTOMERS__ = { statuses: <%- JSON.stringify(customerStatuses) %> };
+    </script>
+    <script src="/scripts/customers.js" defer></script>
+  </body>
+</html>

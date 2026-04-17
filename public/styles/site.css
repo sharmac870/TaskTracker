@@ -895,6 +895,105 @@ button:hover {
   gap: 10px;
 }
 
+.customers-workspace {
+  grid-template-columns: 320px minmax(0, 1fr);
+}
+
+.customer-filter-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.customer-list {
+  display: grid;
+  gap: 10px;
+  padding: 4px 2px 2px;
+}
+
+.customer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow);
+  animation: rise 240ms ease;
+}
+
+.customer-row-main {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.customer-row-title h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.customer-notes-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.customer-row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.customer-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.customer-status-badge[data-status="Prospect"] {
+  background: rgba(100, 116, 139, 0.12);
+  color: #475569;
+}
+
+.customer-status-badge[data-status="In Discussion"] {
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+}
+
+.customer-status-badge[data-status="Pilot"] {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+
+.customer-status-badge[data-status="Onboarded"] {
+  background: rgba(16, 185, 129, 0.12);
+  color: #065f46;
+}
+
+.customer-status-badge[data-status="Churned"] {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+.customer-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(31, 35, 48, 0.06);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
 @keyframes rise {
   from {
     opacity: 0;
@@ -910,6 +1009,7 @@ button:hover {
   .hero,
   .workspace,
   .lessons-layout,
+  .customers-workspace,
   .hero.hero-compact {
     grid-template-columns: 1fr;
   }
@@ -937,8 +1037,9 @@ button:hover {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .filter-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .filter-grid,
+  .customer-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
 }
@@ -989,7 +1090,8 @@ button:hover {
     display: grid;
   }
 
-  .filter-grid {
+  .filter-grid,
+  .customer-filter-grid {
     grid-template-columns: 1fr;
   }
 
